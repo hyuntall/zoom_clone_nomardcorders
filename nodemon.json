@@ -1,3 +1,4 @@
 {
+    "ignore": ["./src/publuc/*"],
     "exec": "babel-node ./src/server.js"
 }
