@@ -27,12 +27,19 @@ const sockets = [];
 // websocket에 연결 시 이벤트
 wss.on("connection", (socket) => {
     sockets.push(socket);
+    socket["nickname"] = "Anon";
     console.log("Connected to Browser");
     socket.on("close", () => console.log("DIsconnected from the Browser"));
-    socket.on("message", (message) => {
-        sockets.forEach(aSocket => aSocket.send(message.toString()));
+    socket.on("message", (msg) => {
+        const message = JSON.parse(msg.toString());
+        switch(message.type){
+            case "new_message":
+                sockets.forEach(aSocket => aSocket.send(`${socket["nickname"]}: ${message.payload}`));
+                break;
+            case "nickname":
+                socket["nickname"] = message.payload;
+        }
     });
-    socket.send("hello!!!");
 });
 
 server.listen(3000, handleListen);
