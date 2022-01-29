@@ -18,14 +18,19 @@ app.get("/*", (req,res) => res.redirect("/"));
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
 
+//websocket 서버 생성
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server })
 
+const sockets = [];
+
+// websocket에 연결 시 이벤트
 wss.on("connection", (socket) => {
+    sockets.push(socket);
     console.log("Connected to Browser");
     socket.on("close", () => console.log("DIsconnected from the Browser"));
     socket.on("message", (message) => {
-        console.log(message.toString());
+        sockets.forEach(aSocket => aSocket.send(message.toString()));
     });
     socket.send("hello!!!");
 });
