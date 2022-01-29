@@ -1,3 +1,3 @@
 //FrontEnd 구동
 
-alert("Hi");
+const socket = new WebSocket(`ws://${window.location.host}`);
