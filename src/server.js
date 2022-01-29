@@ -21,35 +21,24 @@ const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) =>{
+    socket["nickname"] = "Admin";
+    socket.onAny((event) =>{
+        console.log(`Socket Event: ${event}`);
+    })
     socket.on("enter_room", (roomName, done) => {
-        console.log(roomName);
-        setTimeout(()=>{
-            done("hello~~~~");
-        }, 10000);
+        socket.join(roomName);
+        done();
+        socket.to(roomName).emit("welcome", socket.nickname);
     });
+    socket.on("disconnecting", () =>{
+        socket.rooms.forEach(room => socket.to(room).emit("bye", socket.nickname));
+    });
+    socket.on("new_message", (msg, room, done) => {
+        socket.to(room).emit("new_message", `${socket.nickname}: ${msg}`);
+        done();
+    });
+    socket.on("nickname", (nickname) => socket["nickname"] = nickname);
 })
-
-/* 
-const wss = new WebSocket.Server({ server })
-
-const sockets = [];
-// websocket에 연결 시 이벤트
-wss.on("connection", (socket) => {
-    sockets.push(socket);
-    socket["nickname"] = "Anon";
-    console.log("Connected to Browser");
-    socket.on("close", () => console.log("DIsconnected from the Browser"));
-    socket.on("message", (msg) => {
-        const message = JSON.parse(msg.toString());
-        switch(message.type){
-            case "new_message":
-                sockets.forEach(aSocket => aSocket.send(`${socket["nickname"]}: ${message.payload}`));
-                break;
-            case "nickname":
-                socket["nickname"] = message.payload;
-        }
-    });
-}); */
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
 httpServer.listen(3000, handleListen);
