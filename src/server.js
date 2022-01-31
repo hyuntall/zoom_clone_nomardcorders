@@ -1,9 +1,8 @@
 //BackEnd에서 구동
 import http from "http";
-import SocketIO from "socket.io";
-import instrument from "@socket.io/admin-ui";
+import {Server} from "socket.io";
+import {instrument} from "@socket.io/admin-ui";
 import express from "express";
-import { count } from "console";
 
 const app = express();
 
@@ -20,7 +19,16 @@ app.get("/*", (req,res) => res.redirect("/"));
 
 //websocket 서버 생성
 const httpServer = http.createServer(app);
-const wsServer = SocketIO(httpServer);
+const wsServer = new Server(httpServer, {
+    cors: {
+        origin: ["https://admin.socket.io"],
+        credentials: true,
+    },
+});
+instrument(wsServer, {
+    auth: false,
+});
+
 
 function publicRooms(){
     const {
