@@ -58,9 +58,9 @@ wsServer.on("connection", (socket) =>{
         //console.log(wsServer.sockets.adapter);
         console.log(`Socket Event: ${event}`);
     })
-    socket.on("enter_room", (roomName, done) => {
+    socket.on("enter_room", (roomName) => {
         socket.join(roomName);
-        done(countRoom(roomName));
+        //done(countRoom(roomName));
         socket.to(roomName).emit("welcome", socket.nickname, countRoom(roomName));
         wsServer.sockets.emit("room_change", publicRooms());
     });
@@ -75,6 +75,22 @@ wsServer.on("connection", (socket) =>{
         done();
     });
     socket.on("nickname", (nickname) => socket["nickname"] = nickname);
+
+    socket.on("offer", (offer, roomName) => {
+        console.log
+        socket.to(roomName).emit("offer", offer);
+    });
+
+    socket.on("answer", (answer, roomName) => {
+        socket.to(roomName).emit("answer", answer);
+    });
+
+    socket.on("ice", (ice, roomName) => {
+        socket.to(roomName).emit("ice", ice);
+    })
+    socket.on("error", (e) => {
+        console.log(e);
+    })
 })
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
