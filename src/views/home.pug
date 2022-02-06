@@ -9,31 +9,33 @@ html(lang="en")
     
     body 
         header
-            h1 Noom!
+            h1#title just chatting
+            h2#yourName
         main
             div#welcome
-                form(action="")
-                    input(placeholder="room name", required, type="text")
-                    Button Enter Room 
-                h4 Open Rooms: 
-                ul
-            div#call 
-                div#myStream
-                    button#mute Mute
-                    button#camera Turn Camera Off
-                    select#cameras
-                        option(value="device") Face Camera
-                    video#myFace(autoplay, playsinline, width="400", height="400")
-                video#peerFace(autoplay, playsinline, width="400", height="400")
-                
-            div#room
-                h3
-                ul
                 form#name
                     input(placeholder="nickname", required, type="text")
-                    Button Save
-                form#msg
-                    input(placeholder="message", required, type="text")
-                    Button Send
+                    Button START
+
+            div#watingRoom
+                ul
+                form#destination
+                    input(placeholder="room name", required, type="text")
+                    Button ENTER ROOM
+
+            div#room
+                h3
+                div#call 
+                    div#myStream
+                        button#mute UnMute
+                        button#camera Turn Camera On
+                        select#cameras
+                            option(value="device") Face Camera
+                        video#myFace(autoplay, playsinline, width="200", height="200", src="/bono.png")
+                div#chat
+                    ul
+                    form#msg
+                        input(placeholder="message", required, type="text")
+                        Button SEND
         script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js")

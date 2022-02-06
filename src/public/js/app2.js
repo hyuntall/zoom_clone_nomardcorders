@@ -1,71 +1,30 @@
 const socket = io();
 
-let myName = "Admin";
-let roomName;
-let myPeerConnection;
-let myDataChannel;
-let muted = true;
-let cameraOff = true;
 
-
-// welcome
 const welcome = document.getElementById("welcome");
-const nameForm = welcome.querySelector("form");
-
-// wating room
-const watingRoom = document.getElementById("watingRoom");
-const destination = watingRoom.querySelector("form");
-watingRoom.hidden = true;
-
-// chatting room
+const form = welcome.querySelector("form");
 const room = document.getElementById("room");
-const chatForm = room.querySelector("form");
-room.hidden = true;
+const call = document.getElementById("call");
 
-// webcam
+call.hidden = true;
+
 const myFace = document.getElementById("myFace");
 const muteBtn = document.getElementById("mute");
 const cameraBtn = document.getElementById("camera");
 const cameraSelect = document.getElementById("cameras");
 const peerFace = document.getElementById("peerFace");
 
-// 닉네임 설정 함수
-function handleNameSubmit(event){
-    event.preventDefault();
-    const name = nameForm.querySelector("input").value;
-    myName = name;
-    welcome.hidden = true;
-    watingRoom.hidden = false;
-    yourName = document.getElementById("yourName");
-    yourName.innerText = `Hello ${myName}!!`
-}
+room.hidden = true
 
-nameForm.addEventListener("submit", handleNameSubmit);
+let roomName;
 
-// 채팅방 생성 함수
-async function showRoom(newCount){
-    watingRoom.hidden = true;
-    room.hidden = false;
-    
-    const h3 = document.querySelector("h3");
-    h3.innerText = `Room ${roomName} (${newCount})`;
-}
+let myStream;
+let muted = false;
+let cameraOff = false;
+let myPeerConnection;
+let myDataChannel;
 
-// 채팅방 입장 함수
-async function handleRoomSubmit(event){
-    event.preventDefault();
-    await getMedia();
-    makeConnection();
-    roomName = destination.querySelector("input").value;
-    socket.emit("enter_room", roomName, myName, showRoom);
-    yourName.hidden = true;
-    const title = document.getElementById("title");
-    title.hidden = true;
-}
 
-destination.addEventListener("submit", handleRoomSubmit);
-
-// 메시지 전송 함수
 function addMessage(message){
     const ul = room.querySelector("ul");
     const li = document.createElement("li");
@@ -73,26 +32,50 @@ function addMessage(message){
     ul.appendChild(li);
 }
 
+function handleNicknameSubmit(event){
+    event.preventDefault();
+    const input = room.querySelector("#name input");
+    socket.emit("nickname", input.value);
+}
+
 function handleMessageSubmit(event){
     event.preventDefault();
-    const input = chatForm.querySelector("input");
-    const msg = input.value;
+    const input = room.querySelector("#msg input");
+    const value = input.value;
     socket.emit("new_message", input.value, roomName,() => {
-        addMessage(`You: ${msg}`);
+        addMessage(`You: ${value}`);
     });
     input.value = "";
 }
 
-chatForm.addEventListener("submit", handleMessageSubmit);
+async function showRoom(newCount){
+    welcome.hidden = true;
+    room.hidden = false;
+    call.hidden = false;
+    await getMedia();
+    makeConnection();
+    const h3 = document.querySelector("h3");
+    h3.innerText = `Room ${roomName} (${newCount})`;
+    const nameForm = room.querySelector('#name');
+    const msgForm = room.querySelector("#msg");
+    nameForm.addEventListener("submit", handleNicknameSubmit);
+    msgForm.addEventListener("submit", handleMessageSubmit);
+}
 
-// 비디오스트림
+async function handleRoomSubmit(event){
+    event.preventDefault();
+    const input = form.querySelector("input");
+    await showRoom()
+    socket.emit("enter_room", input.value);
+    roomName = input.value;
+    input.value = "";
+}
+
 async function getCameras(){
     try{
         const devices = await navigator.mediaDevices.enumerateDevices()
         const cameras = devices.filter(device => device.kind === "videoinput");
         const currentCamera = myStream.getVideoTracks()[0];
-        myStream.getVideoTracks().forEach((track) => (track.enabled = false));
-        myStream.getAudioTracks().forEach((track) => (track.enabled =false));
         cameras.forEach(camera => {
             const option = document.createElement("option");
             option.value = camera.deviceId
@@ -131,6 +114,9 @@ async function getMedia(deviceId){
     }
 }
 
+
+form.addEventListener("submit", handleRoomSubmit);
+
 function handleMuteClick(){
     myStream.getAudioTracks().forEach((track) => (track.enabled = !track.enabled));
     if(!muted){
@@ -164,11 +150,6 @@ async function handleCameraChange(){
     }
 }
 
-muteBtn.addEventListener("click", handleMuteClick);
-cameraBtn.addEventListener("click", handleCameraClick);
-cameraSelect.addEventListener("input", handleCameraChange);
-
-// 피어커넥션
 function handleIce(data){
     console.log("sent candidate");
     socket.emit("ice", data.candidate, roomName);
@@ -176,48 +157,25 @@ function handleIce(data){
 
 function handleAddStream(data){
     console.log("got an stream from my peer");
-    console.log("Peers' Stream ", data.streams[0]);
+    console.log("Peers' Stream ", data.stream);
     console.log("My Stream ", myStream);
-    const peerFace = document.createElement("video");
-    peerFace.autoplay = true;
-    peerFace.playsInline = true;
-    peerFace.width = "200";
-    peerFace.height = "200";
     peerFace.srcObject = data.streams[0];
-    call.appendChild(peerFace);
 }
 
+muteBtn.addEventListener("click", handleMuteClick);
+cameraBtn.addEventListener("click", handleCameraClick);
+cameraSelect.addEventListener("input", handleCameraChange);
+
+// Socket Code
 
 
-// RTC code
-function makeConnection(){
-    myPeerConnection = new RTCPeerConnection({
-            iceServers: [
-            {
-                urls: [
-                    "stun:stun.l.google.com.19302",
-                    "stun:stun1.l.google.com.19302",
-                    "stun:stun2.l.google.com.19302",
-                    "stun:stun3.l.google.com.19302",
-                    "stun:stun4.l.google.com.19302",
-                ]
-            }
-        ]
-    });
-    myPeerConnection.addEventListener("icecandidate", handleIce);
-    myPeerConnection.addEventListener("track", handleAddStream);
-    myStream.getTracks().forEach((track) => myPeerConnection.addTrack(track, myStream));
-}
-
-// socket code
-
-socket.on("welcome", async (userName, newCount) => {
+socket.on("welcome", async (user, newCount) => {
     myDataChannel = myPeerConnection.createDataChannel("chat");
     myDataChannel.addEventListener("message", console.log);
     console.log("made data channel");
     const h3 = document.querySelector("h3");
     h3.innerText = `Room ${roomName} (${newCount})`;
-    addMessage(`${userName}님이 접속하셨습니다.`);
+    addMessage(`${user}님이 접속하셨습니다.`);
     const offer = await myPeerConnection.createOffer();
     console.log(offer);
     myPeerConnection.setLocalDescription(offer);
@@ -225,16 +183,16 @@ socket.on("welcome", async (userName, newCount) => {
     console.log("sent the offer");
 })
 
-socket.on("new_message", addMessage);
-
 socket.on("bye", (user, newCount) =>{
     const h3 = document.querySelector("h3");
     h3.innerText = `Room ${roomName} (${newCount})`;
     addMessage(`${user}님이 떠나셨습니다.`);
 })
 
+socket.on("new_message", addMessage);
+
 socket.on("room_change", (rooms) => {
-    const roomList = watingRoom.querySelector("ul");
+    const roomList = welcome.querySelector("ul");
     roomList.innerHTML = "";
     if(rooms.length === 0){
         roomList.innerHTML = "";
@@ -248,7 +206,6 @@ socket.on("room_change", (rooms) => {
 });
 
 socket.on("offer", async (offer) => {
-    console.log(myPeerConnection);
     myPeerConnection.addEventListener("datachannel", (event) => {
         myDataChannel = event.channel;
         myDataChannel.addEventListener("message", console.log);
@@ -270,3 +227,23 @@ socket.on("ice", (ice) => {
     console.log("receivd candidate");
     myPeerConnection.addIceCandidate(ice);
 })
+
+// RTC code
+function makeConnection(){
+    myPeerConnection = new RTCPeerConnection({
+            iceServers: [
+            {
+                urls: [
+                    "stun:stun.l.google.com.19302",
+                    "stun:stun1.l.google.com.19302",
+                    "stun:stun2.l.google.com.19302",
+                    "stun:stun3.l.google.com.19302",
+                    "stun:stun4.l.google.com.19302",
+                ]
+            }
+        ]
+    });
+    myPeerConnection.addEventListener("icecandidate", handleIce);
+    myPeerConnection.addEventListener("track", handleAddStream);
+    myStream.getTracks().forEach((track) => myPeerConnection.addTrack(track, myStream));
+}

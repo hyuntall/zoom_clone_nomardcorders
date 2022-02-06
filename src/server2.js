@@ -1,8 +1,8 @@
+//BackEnd에서 구동
 import http from "http";
 import {Server} from "socket.io";
 import {instrument} from "@socket.io/admin-ui";
 import express from "express";
-import { count } from "console";
 
 const app = express();
 
@@ -25,10 +25,10 @@ const wsServer = new Server(httpServer, {
         credentials: true,
     },
 });
-
 instrument(wsServer, {
     auth: false,
 });
+
 
 function publicRooms(){
     const {
@@ -52,18 +52,29 @@ function countRoom(roomName){
 }
 
 wsServer.on("connection", (socket) =>{
-    socket.on("enter_room", (roomName, userName, done) => {
-        socket["userName"] = userName;
+    wsServer.sockets.emit("room_change", publicRooms());
+    socket["nickname"] = "Admin";
+    socket.onAny((event) =>{
+        //console.log(wsServer.sockets.adapter);
+        console.log(`Socket Event: ${event}`);
+    })
+    socket.on("enter_room", (roomName) => {
         socket.join(roomName);
-        done(countRoom(roomName));
-        socket.to(roomName).emit("welcome", socket.userName, countRoom(roomName));
+        //done(countRoom(roomName));
+        socket.to(roomName).emit("welcome", socket.nickname, countRoom(roomName));
         wsServer.sockets.emit("room_change", publicRooms());
     });
-
+    socket.on("disconnecting", () =>{
+        socket.rooms.forEach((room) => socket.to(room).emit("bye", socket.nickname, countRoom(room) - 1));
+    });
+    socket.on("disconnect", () => {
+        wsServer.sockets.emit("room_change", publicRooms());
+    })
     socket.on("new_message", (msg, room, done) => {
-        socket.to(room).emit("new_message", `${socket.userName}: ${msg}`);
+        socket.to(room).emit("new_message", `${socket.nickname}: ${msg}`);
         done();
     });
+    socket.on("nickname", (nickname) => socket["nickname"] = nickname);
 
     socket.on("offer", (offer, roomName) => {
         console.log
@@ -77,14 +88,10 @@ wsServer.on("connection", (socket) =>{
     socket.on("ice", (ice, roomName) => {
         socket.to(roomName).emit("ice", ice);
     })
-
-    socket.on("disconnecting", () =>{
-        socket.rooms.forEach((room) => socket.to(room).emit("bye", socket.userName, countRoom(room) - 1));
-    });
-    socket.on("disconnect", () => {
-        wsServer.sockets.emit("room_change", publicRooms());
+    socket.on("error", (e) => {
+        console.log(e);
     })
-});
+})
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
 httpServer.listen(3000, handleListen);
