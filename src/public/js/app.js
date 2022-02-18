@@ -7,7 +7,6 @@ let myDataChannel;
 let muted = true;
 let cameraOff = true;
 
-
 // welcome
 const welcome = document.getElementById("welcome");
 const nameForm = welcome.querySelector("form");
@@ -23,16 +22,20 @@ const chatForm = room.querySelector("form");
 room.hidden = true;
 
 // webcam
+const myStreamDiv = document.getElementById("myStream")
 const myFace = document.getElementById("myFace");
 const muteBtn = document.getElementById("mute");
 const cameraBtn = document.getElementById("camera");
 const cameraSelect = document.getElementById("cameras");
+// peerWebCam
+const peerStreamDiv = document.getElementById("peerStream")
 const peerFace = document.getElementById("peerFace");
+const peerMuteBtn = document.getElementById("peerMute");
 
 // 닉네임 설정 함수
 function handleNameSubmit(event){
     event.preventDefault();
-    const name = nameForm.querySelector("input").value;
+    const name = nameForm.querySelector("#settingInput").value;
     myName = name;
     welcome.hidden = true;
     watingRoom.hidden = false;
@@ -77,6 +80,7 @@ function handleMessageSubmit(event){
     event.preventDefault();
     const input = chatForm.querySelector("input");
     const msg = input.value;
+    //myDataChannel.send(msg);
     socket.emit("new_message", input.value, roomName,() => {
         addMessage(`You: ${msg}`);
     });
@@ -178,16 +182,18 @@ function handleAddStream(data){
     console.log("got an stream from my peer");
     console.log("Peers' Stream ", data.streams[0]);
     console.log("My Stream ", myStream);
-    const peerFace = document.createElement("video");
-    peerFace.autoplay = true;
-    peerFace.playsInline = true;
-    peerFace.width = "200";
-    peerFace.height = "200";
+    peerStreamDiv.hidden = false;
     peerFace.srcObject = data.streams[0];
-    call.appendChild(peerFace);
+    myStreamDiv.style.width = "50%"
 }
 
-
+function handleRemovePeer(){
+    myStreamDiv.style.width = "100%";
+    myPeerConnection.close();
+    myPeerConnection = null;
+    peerStreamDiv.hidden=true;
+    makeConnection();
+}
 
 // RTC code
 function makeConnection(){
@@ -206,7 +212,9 @@ function makeConnection(){
     });
     myPeerConnection.addEventListener("icecandidate", handleIce);
     myPeerConnection.addEventListener("track", handleAddStream);
-    myStream.getTracks().forEach((track) => myPeerConnection.addTrack(track, myStream));
+    myStream.getTracks().forEach((track) => {
+        myPeerConnection.addTrack(track, myStream)
+    });
 }
 
 // socket code
@@ -231,6 +239,7 @@ socket.on("bye", (user, newCount) =>{
     const h3 = document.querySelector("h3");
     h3.innerText = `Room ${roomName} (${newCount})`;
     addMessage(`${user}님이 떠나셨습니다.`);
+    handleRemovePeer();
 })
 
 socket.on("room_change", (rooms) => {

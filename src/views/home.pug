@@ -5,37 +5,52 @@ html(lang="en")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Noom
-        link(rel="stylesheet", href="https://unpkg.com/mvp.css")
+        style
+            include style.css
     
-    body 
+    body
         header
             h1#title just chatting
-            h2#yourName
         main
             div#welcome
                 form#name
-                    input(placeholder="nickname", required, type="text")
+                    div#characters
+                        text 마라탕
+                        legend 캐릭터
+                            img(src="bono.png" id="bonobono" alt='bonobono' style='width:100px; height:100px;')
+                            input(type="radio" name="gender" value="male" checked)
+                            img(id="porori" alt='porori' style='width:100px; height:100px;')
+                            input(type="radio" name="gender" value="female")
+                    input(placeholder="nickname", required, type="text", id="settingInput")
                     Button START
 
             div#watingRoom
-                ul
+                h2#yourName
+                text chatting room list
+                div#opendRoom
+                    ul
                 form#destination
-                    input(placeholder="room name", required, type="text")
+                    input(placeholder="room name", required, type="text", id="settingInput")
                     Button ENTER ROOM
 
             div#room
                 h3
+                
                 div#call 
                     div#myStream
-                        button#mute UnMute
-                        button#camera Turn Camera On
-                        select#cameras
-                            option(value="device") Face Camera
-                        video#myFace(autoplay, playsinline, width="200", height="200", src="/bono.png")
+                        div#streamSetting
+                            button#mute UnMute
+                            button#camera Turn Camera On
+                            select#cameras
+                                option(value="device") Face Camera
+                        video#myFace(autoplay, playsinline)
+                    div#peerStream(hidden=true)
+                        div#streamSetting
+                            button#peerMute UnMute
+                        video#peerFace(autoplay, playsinline)
                 div#chat
                     ul
                     form#msg
                         input(placeholder="message", required, type="text")
-                        Button SEND
         script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js")
