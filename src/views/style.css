@@ -5,30 +5,25 @@ body {
 ul {
     list-style-type: none;
     text-align: left;
-    font-size: 20px;
-}
-
-#settingInput {
-    padding: 0;
-    width: 200px;
-    height: 50px;
-    background-color: aliceblue;
-    border: 3px solid black;
-    border-radius: 5px;
+    font-size: 1em;
 }
 
 button {
+    position: relative;
     padding: 0;
-    width: 100px;
-    height: 50px;
+    margin: 0;
+    width: calc(20% - 6px);
+    height: 100%;
     background-color:aqua;
     border: 3px solid black;
     border-radius: 5px;
+    font-size: 1em;
 }
 
 #title {
     text-align: center;
-    font-size: 50px;
+    font-size: 4em;
+    font-family:'Courier New', Courier, monospace;
 }
 
 #yourName {
@@ -39,35 +34,50 @@ button {
 #welcome {
     position: relative;
     font-size: 30px;
-    height: 500px;
-    width: 500px; 
-    left: 50%; 
-    margin-left: -250px;
-    text-align: center;
+    height: 60vh;
+    width: 60vw; 
+    left: 20vw; 
     line-height: normal;
     background-color: beige;
     border: 3px solid black;
     border-radius: 5px;
+    text-align: center;
 }
 
 #welcome form {
     position: relative;
     top: 30%;
-    width: 400px; 
-    left: 50%; 
-    margin-left: -200px;
+    width: 80%;
+    left: 10%;
     color:aquamarine;
     vertical-align: middle;
+    font-size: 1em;
+}
+
+#inputDiv {
+    position: relative;
+    width: 100%;
+    min-height: 40%;
+}
+
+#settingInput {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    width: 80%;
+    height: 100%;
+    background-color: aliceblue;
+    border: 3px solid black;
+    border-radius: 5px;
+    font-size: 1em;
 }
 
 #watingRoom {
     position: relative;
     font-size: 30px;
-    height: 500px;
-    width: 500px; 
-    left: 50%; 
-    margin-left: -250px;
-    text-align: center;
+    height: 60vh;
+    width: 60vw; 
+    left: 20vw; 
     line-height: normal;
     background-color: beige;
     border: 3px solid black;
@@ -76,7 +86,7 @@ button {
 
 #watingRoom text {
     position: relative;
-    margin-left: -185px;
+    left: 10%;
     background-color: #F8F0A4;
     border: 3px solid black;
     border-radius: 5px;
@@ -84,11 +94,10 @@ button {
 
 #opendRoom {
     position: relative;
-    width: 400px; 
-    left: 50%; 
-    margin-left: -200px;
-    min-height: 200px;
-    max-height: 200px;
+    width: 80%; 
+    left: 10%; 
+    min-height: 40%;
+    max-height: 40%;
     background-color: #F8F0A4;
     border: 3px solid black;
     border-radius: 5px;
@@ -96,22 +105,21 @@ button {
 
 
 #watingRoom form{
-    padding: 0;
-    position: absolute;
-    top: 80%;
-    width: 400px; 
-    left: 50%; 
-    margin-left: -200px;
+    position: relative;
+    width: 80%;
+    left: 10%;
+    color:aquamarine;
     vertical-align: middle;
+    font-size: 1em;
 }
 
 #room {
-    position: absolute;
+    position: relative;
     font-size: 30px;
-    width: 90%;
-    height: 94%;
-    left: 5%;
-    top: 3%;
+    width: 96vw;
+    height: 96vh;
+    left: 2vw;
+    top: 2vh;
     text-align: center;
     line-height: normal;
     background-color: beige;
@@ -121,82 +129,94 @@ button {
 
 #call {
     position: relative;
-    width: 71%;
-    height: 80%;
-    left: 2%;
+    width: 70vw;
+    height: 70vh;
+    left: 2vw;
     float: left;
     background-color: white;
+    border: 3px solid black;
+    border-radius: 10px;
 }
-
 #myStream {
     position: relative;
+    top: calc(35vh - 15vw);
     float: left;
-    width: 100%;
-    height: 50%;
+    width: 35vw;
 }
 
-#myStream video {
+#streamSetting {
+    width: 35vw;
+    height: 5vh;
+    margin: 0;
+    padding: 0;
+    font-size: 0.5em;
+}
+
+#streamSetting button {
+    position: relative;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    float: left;
+    font-weight: 200;
+    width: 25%;
+}
+
+#streamSetting select {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: calc(50% - 6px);
+    height: 100%;
+    border: 3px solid black;
+    border-radius: 5px;
+}
+
+video {
     position: relative;
     float: left;
-    width: 100%;
+    width: calc(100% - 6px);
+    transform: rotateY(180deg);
+    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+    -moz-transform:rotateY(180deg); /* Firefox */
+    border: 3px solid black;
+    border-radius: 3px;
 }
 
 #peerStream {
     position: relative;
     float: left;
-    width: 50%;
-}
-
-#peerStream video {
-    position: relative;
-    float: left;
-    height: 100%;
-}
-
-#myStream #streamSetting {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-#myStream button {
-    float: left;
-    margin: 0;
-    padding: 0;
-    font-size: 13px;
-    font-weight: 200;
-    width: 25%;
-}
-
-#myStream select {
-    width: 50%;
-
+    top: calc(35vh - 15vw);
+    width: 35vw;
 }
 
 #chat {
-    float: left;
-    width: 25%;
-    height: 80%;
-    right: 2%;
-    background-color: beige;
-    border: 0px solid black;
+    font-size: 0.5em;
+    position: relative;
+    float: right;
+    right: 2vw;
+    width: 20vw;
+    height: 70vh;
+    background-color: white;
+    border: 3px solid black;
     border-radius: 10px;
 }
 
 #chat ul {
     position: relative;
     height: 90%;
-    background-color: white;
-    border: 0px solid black;
-    border-radius: 10px;
     padding: 0;
     margin: 0;
+}
+
+#myMessage {
+    text-align: right;
 }
 
 #chat form {
     padding: 0;
     position: relative;
-    background-color: beige;
+    background-color: white;
     border: 0px solid black;
     border-radius: 10px;
     height: 10%;
@@ -209,6 +229,10 @@ button {
 
 #chat form input {
     position: relative;
-    line-height: 30px;
-    width: 90%;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    border: 0 solid black;
+    border-radius: 10px;
+    font-size: 1em;
 }

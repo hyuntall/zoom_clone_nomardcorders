@@ -21,8 +21,9 @@ html(lang="en")
                             input(type="radio" name="gender" value="male" checked)
                             img(id="porori" alt='porori' style='width:100px; height:100px;')
                             input(type="radio" name="gender" value="female")
-                    input(placeholder="nickname", required, type="text", id="settingInput")
-                    Button START
+                    div#inputDiv
+                        input(placeholder="nickname", required, type="text", id="settingInput")
+                        Button START
 
             div#watingRoom
                 h2#yourName
@@ -30,8 +31,9 @@ html(lang="en")
                 div#opendRoom
                     ul
                 form#destination
-                    input(placeholder="room name", required, type="text", id="settingInput")
-                    Button ENTER ROOM
+                    div#inputDiv
+                        input(placeholder="room name", required, type="text", id="settingInput")
+                        Button ENTER
 
             div#room
                 h3
@@ -40,7 +42,7 @@ html(lang="en")
                     div#myStream
                         div#streamSetting
                             button#mute UnMute
-                            button#camera Turn Camera On
+                            button#camera Camera On
                             select#cameras
                                 option(value="device") Face Camera
                         video#myFace(autoplay, playsinline)

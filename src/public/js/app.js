@@ -76,13 +76,21 @@ function addMessage(message){
     ul.appendChild(li);
 }
 
+function addMyMessage(message){
+    const ul = room.querySelector("ul");
+    const li = document.createElement("li");
+    li.innerText = message;
+    li.id = "myMessage"
+    ul.appendChild(li);
+}
+
 function handleMessageSubmit(event){
     event.preventDefault();
     const input = chatForm.querySelector("input");
     const msg = input.value;
     //myDataChannel.send(msg);
     socket.emit("new_message", input.value, roomName,() => {
-        addMessage(`You: ${msg}`);
+        addMyMessage(`You: ${msg}`);
     });
     input.value = "";
 }
@@ -149,10 +157,10 @@ function handleMuteClick(){
 function handleCameraClick(){
     myStream.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
     if(cameraOff){
-        cameraBtn.innerText = "Turn Camera Off";
+        cameraBtn.innerText = "Camera Off";
         cameraOff = false;
     } else{
-        cameraBtn.innerText = "Turn Camera On";
+        cameraBtn.innerText = "Camera On";
         cameraOff = true;
     }
 }
@@ -188,7 +196,7 @@ function handleAddStream(data){
 }
 
 function handleRemovePeer(){
-    myStreamDiv.style.width = "100%";
+    //myStreamDiv.style.width = "100%";
     myPeerConnection.close();
     myPeerConnection = null;
     peerStreamDiv.hidden=true;
