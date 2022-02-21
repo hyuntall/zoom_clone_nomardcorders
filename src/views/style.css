@@ -7,17 +7,19 @@ ul {
     text-align: left;
     font-size: 1em;
 }
-
+h3 {
+    font-size: 3vw;
+}
 button {
     position: relative;
     padding: 0;
     margin: 0;
     width: calc(20% - 6px);
-    height: 100%;
+    min-height: 40%;
     background-color:aqua;
     border: 3px solid black;
     border-radius: 5px;
-    font-size: 1em;
+    font-size: 2vw;
 }
 
 #title {
@@ -28,7 +30,7 @@ button {
 
 #yourName {
     text-align: center;
-    font-size: 35px;
+    font-size: 3vw;
 }
 
 #welcome {
@@ -51,7 +53,7 @@ button {
     left: 10%;
     color:aquamarine;
     vertical-align: middle;
-    font-size: 1em;
+    font-size: 3vw;
 }
 
 #inputDiv {
@@ -69,7 +71,7 @@ button {
     background-color: aliceblue;
     border: 3px solid black;
     border-radius: 5px;
-    font-size: 1em;
+    font-size: 2vw;
 }
 
 #watingRoom {
@@ -82,6 +84,7 @@ button {
     background-color: beige;
     border: 3px solid black;
     border-radius: 5px;
+    font-size: 2vw;
 }
 
 #watingRoom text {
@@ -149,7 +152,7 @@ button {
     height: 5vh;
     margin: 0;
     padding: 0;
-    font-size: 0.5em;
+    font-size: 0.8vw;
 }
 
 #streamSetting button {

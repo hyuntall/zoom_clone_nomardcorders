@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@socket.io/admin-ui": "^0.2.0",
+    "certbot": "^5.0.3",
     "express": "^4.17.2",
     "localtunnel": "^2.0.2",
     "mobile-device-detect": "^0.4.3",
